@@ -11,9 +11,7 @@ $items = \yii\helpers\ArrayHelper::map($phonelist, 'group_name', 'group_name');
 
 ?>
 
-<?/*= $form->field($model, 'phones')->dropDownList($items)*/?>
 <?= $form->field($model, 'phones')->checkboxList($items) ?>
-
 
 <?= $form->field($model, 'mail')->textarea(['rows' => 6]) ?>
 

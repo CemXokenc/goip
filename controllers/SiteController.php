@@ -2,13 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\NewsletterForm;
-use app\models\SingleForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
+use app\models\LoginForm;
+use app\models\ContactForm;
+use app\models\NewsletterForm;
+use app\models\SingleForm;
+use app\models\SignupForm;
 
 
 class SiteController extends Controller
@@ -70,6 +73,58 @@ class SiteController extends Controller
         return $this->render('api');
     }
 
+    public function actionLogin()
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goBack();
+        }
+
+        $model->password = '';
+        return $this->render('login', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->goHome();
+    }
+
+    /**
+     * Displays contact page.
+     *
+     * @return Response|string
+     */
+    public function actionContact()
+    {
+        $model = new ContactForm();
+        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+            Yii::$app->session->setFlash('contactFormSubmitted');
+
+            return $this->refresh();
+        }
+        return $this->render('contact', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays about page.
+     *
+     * @return string
+     */
+    public function actionAbout()
+    {
+        return $this->render('about');
+    }
+
     public function actionSingle()
     {
         $model = new SingleForm();
@@ -85,11 +140,24 @@ class SiteController extends Controller
     {
         $model = new NewsletterForm();
 
-
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             return $this->render('newsletter-confirm', ['model' => $model]);
         } else {
             return $this->render('newsletter', ['model' => $model]);
         }
     }
+
+    public function actionSignup()
+    {
+        $model = new \models\SignupForm();
+        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
+            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+            return $this->goHome();
+        }
+
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
+
 }
