@@ -2,16 +2,17 @@
 
 namespace app\controllers;
 
+use app\models\ContactForm;
+use app\models\LoginForm;
+use app\models\NewsletterForm;
+use app\models\SingleForm;
+use app\models\SignupForm;
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
-use app\models\NewsletterForm;
-use app\models\SingleForm;
-use app\models\SignupForm;
 
 
 class SiteController extends Controller
@@ -58,11 +59,6 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
         return $this->render('index');
@@ -97,11 +93,6 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
     public function actionContact()
     {
         $model = new ContactForm();
@@ -115,11 +106,6 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
     public function actionAbout()
     {
         return $this->render('about');
@@ -149,15 +135,22 @@ class SiteController extends Controller
 
     public function actionSignup()
     {
-        $model = new \models\SignupForm();
-        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+        if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
+        $model = new SignupForm();
+        if($model->load(\Yii::$app->request->post()) && $model->validate())
+            {
+                $user = new User();
+                $user->username = $model->username;
+                $user->email = $model->email;
+                $user->password = \Yii::$app->security->generatePasswordHash($model->username);
+                if($user->save()){
+                    return $this->goHome();
+                }
+            }
 
-        return $this->render('signup', [
-            'model' => $model,
-        ]);
+        return $this->render('signup', compact('model'));
     }
 
 }
