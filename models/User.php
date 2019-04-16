@@ -8,13 +8,6 @@ use yii\web\IdentityInterface;
 class User extends ActiveRecord implements IdentityInterface
 {
 
-    public $id;
-    public $username;
-    public $email;
-    public $password;
-    public $authKey;
-    public $accessToken;
-
     public static function findIdentityByAccessToken($token, $type = null)
     {
         foreach (self::$users as $user) {
