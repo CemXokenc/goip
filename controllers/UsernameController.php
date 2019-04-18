@@ -66,9 +66,12 @@ class UsernameController extends Controller
     {
         $model = new Username();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->password = \Yii::$app->security->generatePasswordHash($model->password);
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
+
 
         return $this->render('create', [
             'model' => $model,
@@ -86,9 +89,12 @@ class UsernameController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->password = \Yii::$app->security->generatePasswordHash($model->password);
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
+
 
         return $this->render('update', [
             'model' => $model,
