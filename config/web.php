@@ -54,14 +54,14 @@ $config = [
                 '<_c:[\w\-]+>/<_a:[\w\-]+>/<id:\d+>' => '<_c>/<_a>',
             ],
         ],
-        /*
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-            ],
+        'authManager' => [
+            'class'           => 'yii\rbac\DbManager',
+            'itemTable'       => 'auth_item',
+            'itemChildTable'  => 'auth_item_child',
+            'assignmentTable' => 'auth_assignment',
+            'ruleTable'       => 'auth_rule',
+            'defaultRoles'    => ['guest'],
         ],
-        */
     ],
     'params' => $params,
 

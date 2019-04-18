@@ -113,6 +113,9 @@ class SiteController extends Controller
 
     public function actionSingle()
     {
+        if(Yii::$app->user->isGuest){
+            return $this->redirect('signup');
+        }
         $model = new SingleForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -124,6 +127,9 @@ class SiteController extends Controller
 
     public function actionNewsletter()
     {
+        if(Yii::$app->user->isGuest){
+            return $this->redirect('signup');
+        }
         $model = new NewsletterForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
